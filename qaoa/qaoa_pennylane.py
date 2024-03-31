@@ -99,7 +99,12 @@ def qaoa_circuit_generator(num_qubits,layers,gammas,betas,quadratics,linears):
 
     return circuit(gammas,betas,quadratics,linears)
 
-# %%
+func_call = 0
+theta = []
+cost = []
+def callback_func(x):
+    theta.append(x)
+
 def qaoa(arr,layers:int):
 
     quadratics, linears, qubo = build_qubo(arr)
@@ -108,9 +113,16 @@ def qaoa(arr,layers:int):
     # Initial guess
     init_gamma = np.array([pi/2]*layers)
     init_beta = np.array([pi/4]*layers)
+
+    init_gamma = np.array([pi/1.5]*layers)
+    init_beta = np.array([pi/4]*layers)
+
     initial_guess = np.concatenate((init_gamma, init_beta))
     
     def expectation_value(theta):
+        # print('expectation_value called')
+        global func_call 
+        func_call = func_call + 1
 
         middle = int(len(theta)/2)
         gammas = theta[:middle]
@@ -118,12 +130,19 @@ def qaoa(arr,layers:int):
 
         counts = qaoa_circuit_generator(num_qubits, layers, gammas, betas, quadratics, linears)
         best_sol = max(counts, key=counts.get)
-        return qubo.objective.evaluate(np.array(list(best_sol), dtype='int'))
+
+        exp = qubo.objective.evaluate(np.array(list(best_sol), dtype='int'))
+        cost.append(exp)
+
+        print(f'Function call: {func_call} - Cost: {exp}')
+
+        return exp
 
 
     # Minimization of the objective function.
     start_time = time.time()
-    res = minimize(expectation_value, initial_guess, method='COBYLA')
+    res = minimize(expectation_value, initial_guess, method='COBYLA',callback=callback_func)
+    # res = minimize(expectation_value, initial_guess, method='BFGS')
     end_time = time.time()
     elapsed_time = end_time - start_time
 
@@ -138,14 +157,27 @@ def qaoa(arr,layers:int):
     return counts
 
 # Defining a test array
-test_array = [1,2,6,3]
+test_array = [5,4,6,1]
+layers = 3
 
 # Running QAOA on for Number Partitioning. 
-counts = qaoa(test_array,10)
-print(f"Counts:\n{counts}\n\n")
+counts = qaoa(test_array,layers)
 
-print(find_most_common_solutions(counts,3))
+# print(f"Counts:\n{counts}\n")
 
 ## Potting
 # plt.bar(range(len(counts)), list(counts.values()), align='center')
 # plt.show()
+
+print(f'\n\nQAOA Solution for {test_array} is: \n\n {find_most_common_solutions(counts,3)}')
+
+# Printing the gammas/betas
+# print(theta)
+
+# plt.imshow(np.array(theta))
+# plt.show()
+
+plt.plot(range(len(cost)),cost)
+plt.grid()
+plt.title('Cost vs. Iterations')
+plt.show()
