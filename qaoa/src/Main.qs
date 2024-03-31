@@ -9,7 +9,7 @@ namespace qaoa{
     operation flat_index(n: Int, i: Int, j: Int): Int{
         return n*i + j
     }
-
+    // Cost Hamiltonian
     operation cost_unitary(qubits: Qubit[], gamma: Double, quadratics: Double[], linears: Double[]): Unit{
         
         let n_qubits = Length(linears);
@@ -31,6 +31,7 @@ namespace qaoa{
         }
     }
 
+    // Mixer Hamiltonian
     operation mixer_unitary(qubits: Qubit[], beta: Double) : Unit{
         for qubit in qubits{
             Rx(2.0 * beta,qubit);
@@ -38,31 +39,20 @@ namespace qaoa{
     }
 
     operation circuit(NQubits: Int, Layers: Int, gammas: Double[], betas: Double[], quadratics: Double[], linears: Double[]) : Int {
-        // Message("Q# Ciruit called");
+
         use q = Qubit[NQubits]; 
         mutable integer_result = 0;
+        
+        // State Preparation |+>
         ApplyToEachA(H,q);
-        // Message($"quad {quadratics}");
-        // Message($"lin {linears}");
 
         for layer in 0..Layers-1{
-            // Message($"Layer {i}");
+
             mixer_unitary(q, betas[layer]);
             cost_unitary(q, gammas[layer], quadratics, linears)
             
         }
-        // for i in 0..NQubits-1{
-        //     let r = M(q[i]);
-        //     // Message($"{r}");
-            
-        //     if r == One{
-        //         set integer_result += 2^i;  
-        //     }
-        // }
-
-        // ResetAll(q);    
-            
-        // return integer_result;
+        // Return the bitstring as an integer.
         return MeasureInteger(q);
     }
 }
