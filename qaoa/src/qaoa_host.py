@@ -16,6 +16,8 @@ from scipy.optimize import minimize
 from collections import Counter
 
 import qsharp
+
+# Set Q# root folder.
 qsharp.init(project_root = 'C:/Users/londh/qc/QRISE_QRE/qaoa')
 
 # Qiskit Imports
@@ -112,12 +114,8 @@ def qaoa_NPP(arr,layers:int):
     linears = linears.toarray()
 
     # Initial guess
-    init_gamma = np.array([pi/10]*layers)
-    init_beta = np.array([pi/15]*layers)
-
     init_gamma = np.array([pi/1.5]*layers)
     init_beta = np.array([pi/4]*layers)
-
     initial_guess = np.concatenate((init_gamma, init_beta))
     
     def expectation_value(theta):
@@ -160,12 +158,14 @@ def qaoa_NPP(arr,layers:int):
     
     return find_most_common_solutions(counts, 3)
 
-test_arr = [5,4,6,1]
+test_array = [5,1,6,1]
 
-n_qubits = len(test_arr)
+n_qubits = len(test_array)
 layers = 3
 
-print(f'\n\nQAOA Solution for {test_arr} is: \n\n {qaoa_NPP(test_arr,layers)}')
+result_state = qaoa_NPP(test_array,layers)
+
+print(f'\n\nQAOA Solution for {test_array} with {layers} layers is: \n\n {result_state}')
 
 plt.plot(range(len(cost)),cost)
 plt.grid()

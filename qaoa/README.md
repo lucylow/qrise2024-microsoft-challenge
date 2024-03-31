@@ -7,6 +7,6 @@ qsharp.init(project_root = './qaoa')
 
 ```
 
-> Note: ***Use*** the forward slash (/), the import will fail with backward slash (\).
+> Note: ***Use*** the forward slash (/), the import will fail with backward slash (\ ).
 
 Notebook should run properly if you have ```qsharp``` installed.
