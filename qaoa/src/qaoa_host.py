@@ -13,7 +13,6 @@ import matplotlib.pyplot as plt
 # Libraries for Model Formulation
 from docplex.mp.model import Model
 from scipy.optimize import minimize
-from collections import Counter
 
 import qsharp
 
@@ -22,12 +21,20 @@ qsharp.init(project_root = 'C:/Users/londh/qc/QRISE_QRE/qaoa')
 
 # Qiskit Imports
 from qiskit_optimization.converters import QuadraticProgramToQubo
-from qiskit.visualization import plot_histogram
 from qiskit_optimization.translators import from_docplex_mp
 
-
-# Function to sort the count dictionary.
+# Defining helper functions.
 def find_most_common_solutions(input_dict, n):
+    """
+    Sorts the keys of the input dictionary in descending order based on their values and returns the first n keys.
+
+    Parameters:
+        input_dict (dict): A dictionary containing the keys and their corresponding values.
+        n (int): The number of most common solutions to return.
+
+    Returns:
+        list: A list of the n most common keys sorted in descending order based on their values.
+    """
     sorted_keys = sorted(input_dict, key=input_dict.get, reverse=True)
     return sorted_keys[:n]
 
@@ -37,22 +44,34 @@ def find_most_common_solutions(input_dict, n):
 # We are using ***docplex*** to build the model and calculate $Q$ and $c$.
 
 def build_qubo(arr: list):
+    """
+    Function to build a QUBO (Quadratic Unconstrained Binary Optimization) model from a given array
+    for the Number Partitioning Problem (NPP).
 
+    Args:
+        arr (list): a list of integers representing the array from which the QUBO is built.
+    Returns:
+        a tuple containing the quadratic coefficients, linear coefficients, and the QUBO model.
+    """
+    # Length of the array - Length of the binary vector x
     n = len(arr)
+    # Sum of the array - c
     c = sum(arr)
+
     # Building the model and its QUBO formulation.
     model = Model()
     x = model.binary_var_list(n)
 
+    # Cost Function for Number Partirioning Problem (NPP)
     Q =  (c - 2*sum(arr[i]*x[i] for i in range(n)))**2
     model.minimize(Q)   
-
     problem = from_docplex_mp(model)
 
+    # QUBO formulation
     converter = QuadraticProgramToQubo()
     qubo = converter.convert(problem)
-    # print(qubo)
 
+    # Quadratic and Linear Coefficients
     quadratics = qubo.objective.quadratic.coefficients
     linears = qubo.objective.linear.coefficients
 
@@ -77,20 +96,16 @@ def arr_to_str(a):
         string += str(i) + ","
     return '[' + string[:-1] + ']'
 
-# ## Creating the QAOA circuit and layers.
-# 
-# I'm using ***Pennylane*** to handle the circuit simulations. I have created functions to generate the QAOA circuit given $Q$ and $c$.
-
 def interger_to_counts(n,result):
     """
     Convert integers to counts and return a dictionary of counts.
     
     Args:
-    n: int - the width of the binary representation
-    result: list - a list of integers representing the results
+    n (int): the width of the binary representation
+    result (list): a list of integers representing the results
     
     Returns:
-    counts: dict - a dictionary containing the counts of each binary representation
+    counts (dict):  - a dictionary containing the counts of each binary representation
     """
     counts = {}
     for i in range(2**n):
@@ -106,7 +121,16 @@ def callback_func(x):
     theta.append(x)
 
 def qaoa_NPP(arr,layers:int):
+    """
+    Function implementing the QAOA algorithm for the Number Partitioning Problem.
 
+    Args:
+        arr (list): a list of integers.
+        layers (int): the number of layers in the QAOA circuit.
+    Returns:
+        counts (dict): a dictionary containing the counts of each bitstring.
+
+    """
     quadratics, linears, qubo = build_qubo(arr)
     num_qubits = len(arr)
 
@@ -145,7 +169,7 @@ def qaoa_NPP(arr,layers:int):
     end_time = time.time()
     elapsed_time = end_time - start_time
 
-    print(f'Elapsed time for QAOA: {elapsed_time} seconds')
+    print(f'\nElapsed time for QAOA: {elapsed_time} seconds')
 
     middle = int(len(res.x)/2)
     prime_gammas = res.x[:middle]
@@ -156,18 +180,50 @@ def qaoa_NPP(arr,layers:int):
     results = qsharp.run(f"qaoa.circuit({input_str})",shots=100)
     counts = interger_to_counts(num_qubits,results)
     
-    return find_most_common_solutions(counts, 3)
+    return counts
 
-test_array = [5,1,6,1]
-
-n_qubits = len(test_array)
+# Defining a test array.
+test_array = [5,1,6]
 layers = 3
 
-result_state = qaoa_NPP(test_array,layers)
+# Running QAOA on for Number Partitioning.
+counts = qaoa_NPP(test_array,layers)
 
-print(f'\n\nQAOA Solution for {test_array} with {layers} layers is: \n\n {result_state}')
-
-plt.plot(range(len(cost)),cost)
+# Plotting the output state.
+plt.figure(figsize=(15, 5))
+plt.bar(range(len(counts)), list(counts.values()), align='center', color='red')
+plt.xticks(range(len(counts)), list(counts.keys()), rotation=90)
+plt.title("QAOA Output State")
+plt.xlabel("Bitstrings")
+plt.ylabel("Counts")
 plt.grid()
-plt.title('Cost vs. Iterations')
 plt.show()
+
+# Plotting Cost vs. iterations.
+plt.figure(figsize=(15, 5))
+plt.plot(range(len(cost)),cost,color='g',ls='--',marker='o',lw=2)
+plt.xticks(range(1,len(cost)+1,5))
+plt.title('Cost vs. Iterations')
+plt.xlabel('Iterations')
+plt.ylabel('Cost')
+plt.grid()
+plt.show()
+
+# Printing Solutions Sets
+best_sol = find_most_common_solutions(counts,3)
+print(f'\nQAOA Top 3 solutions for {test_array} and {layers} layers: \n{best_sol}')
+
+# Calculating S and S_A
+c = sum(test_array)
+S = []
+S_A = []
+for ind,bit in enumerate(best_sol[0]):
+    if bit == '1':
+        S.append(ind)
+    else:
+        S_A.append(ind)
+
+sum_S = sum(np.array(test_array)[S])
+sum_S_A = sum(np.array(test_array)[S_A])    
+
+print(f'\n\n Best partition:\nS {np.array(test_array)[S]} - Sum(S) = {sum_S}\nS/A {np.array(test_array)[S_A]} - Sum(S/A) = {sum_S_A}')

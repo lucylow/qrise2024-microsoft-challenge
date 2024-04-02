@@ -1,8 +1,6 @@
-/// # Description
-/// This is a program for simulating the QAOA circuit. 
+// This is a program for simulating the QAOA circuit. 
 namespace qaoa{
 
-    open Microsoft.Quantum.Arrays;
     open Microsoft.Quantum.Measurement;
 
     // Function for getting flat index
@@ -38,6 +36,7 @@ namespace qaoa{
         }
     }
 
+    // Function to create the QAOA circuit.
     operation circuit(NQubits: Int, Layers: Int, gammas: Double[], betas: Double[], quadratics: Double[], linears: Double[]) : Int {
 
         use q = Qubit[NQubits]; 
@@ -47,10 +46,8 @@ namespace qaoa{
         ApplyToEachA(H,q);
 
         for layer in 0..Layers-1{
-
             mixer_unitary(q, betas[layer]);
             cost_unitary(q, gammas[layer], quadratics, linears)
-            
         }
         // Return the bitstring as an integer.
         return MeasureInteger(q);
