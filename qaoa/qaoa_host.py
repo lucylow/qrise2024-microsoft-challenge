@@ -211,10 +211,9 @@ plt.show()
 
 # Printing Solutions Sets
 best_sol = find_most_common_solutions(counts,3)
-print(f'\nQAOA Top 3 solutions for {test_array} and {layers} layers: \n{best_sol}')
+print(f'\nTop 3 solutions for the array {test_array} and {layers} layers: \n{best_sol}')
 
 # Calculating S and S_A
-c = sum(test_array)
 S = []
 S_A = []
 for ind,bit in enumerate(best_sol[0]):
@@ -226,4 +225,4 @@ for ind,bit in enumerate(best_sol[0]):
 sum_S = sum(np.array(test_array)[S])
 sum_S_A = sum(np.array(test_array)[S_A])    
 
-print(f'\n\n Best partition:\nS {np.array(test_array)[S]} - Sum(S) = {sum_S}\nS/A {np.array(test_array)[S_A]} - Sum(S/A) = {sum_S_A}')
+print(f'\nBest Partition:\nS: {np.array(test_array)[S]}\nSum(S) = {sum_S}\n\nS/A: {np.array(test_array)[S_A]}\nSum(S/A) = {sum_S_A}')

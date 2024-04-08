@@ -100,9 +100,9 @@ def qaoa_circuit_generator(num_qubits,layers,gammas,betas,quadratics,linears):
         qml.Barrier()
 
         for layer in range(layers):
-            U_M(betas[layer],num_qubits)
-            qml.Barrier()
             U_C(gammas[layer],quadratics,linears,num_qubits)
+            qml.Barrier()
+            U_M(betas[layer],num_qubits)
             qml.Barrier()
         
         return qml.counts(wires=range(num_qubits))
