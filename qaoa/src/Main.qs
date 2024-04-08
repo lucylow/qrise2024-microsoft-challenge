@@ -46,8 +46,8 @@ namespace qaoa{
         ApplyToEachA(H,q);
 
         for layer in 0..Layers-1{
+            cost_unitary(q, gammas[layer], quadratics, linears);
             mixer_unitary(q, betas[layer]);
-            cost_unitary(q, gammas[layer], quadratics, linears)
         }
         // Return the bitstring as an integer.
         return MeasureInteger(q);
