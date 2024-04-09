@@ -1,2 +1,6 @@
 qaoa/__pycache__
 .vscode
+*.xml
+*.iml
+.idea
+.DS_Store

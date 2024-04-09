@@ -55,7 +55,7 @@ def build_qubo(arr: list):
     model = Model()
     x = model.binary_var_list(n)
 
-    # Cost Function for Number Partirioning Problem (NPP)
+    # Cost Function for Number Partitioning Problem (NPP)
     Q =  (c - 2*sum(arr[i]*x[i] for i in range(n)))**2
     model.minimize(Q)   
     problem = from_docplex_mp(model)
@@ -72,7 +72,7 @@ def build_qubo(arr: list):
 
 # Creating the QAOA circuit and layers.
 # Defining the Cost and the Layers of QAOA.
-# Cost Layer.
+# Cost Hamiltonian.
 def U_C(gamma,quadratics,linears,num_qubits):
 
     for wire in range(num_qubits):
@@ -84,7 +84,7 @@ def U_C(gamma,quadratics,linears,num_qubits):
             qml.RZ(1/4*quadratics[(wire1, wire2)]*gamma,wires=wire2)
             qml.CNOT(wires=[wire1, wire2])
 
-# Mixer Layer.
+# Mixer Hamiltonian
 def U_M(beta,num_qubits):
     for wire in range(num_qubits):
         qml.RX(2*beta,wires=wire)
@@ -95,6 +95,7 @@ def qaoa_circuit_generator(num_qubits,layers,gammas,betas,quadratics,linears):
     @qml.qnode(dev)
     def circuit(gammas,betas,quadratics,linears):
 
+        # Preparing the initial state - |+>
         for qubit in range(num_qubits):
             qml.Hadamard(wires=qubit)
         qml.Barrier()
@@ -114,9 +115,10 @@ func_call = 0
 theta = []
 cost = []
 
-# Callback fucntion for the optimizer
+# Callback function for the optimizer.
 def callback_func(x):
     theta.append(x)
+    return None
 
 def qaoa(arr,layers:int):
     """
@@ -146,12 +148,6 @@ def qaoa(arr,layers:int):
     quadratics, linears, qubo = build_qubo(arr)
     num_qubits = len(arr)
 
-    # Initial guess
-    init_gamma = np.array([pi/1.5]*layers)
-    init_beta = np.array([pi/4]*layers)
-
-    initial_guess = np.concatenate((init_gamma, init_beta))
-    
     def expectation_value(theta):
         # print('expectation_value called')
         global func_call 
@@ -172,6 +168,11 @@ def qaoa(arr,layers:int):
 
         return exp
 
+    # Initial guess
+    init_gamma = np.array([pi/1.5]*layers)
+    init_beta = np.array([pi/4]*layers)
+    initial_guess = np.concatenate((init_gamma, init_beta))
+
 
     # Minimization of the objective function.
     start_time = time.time()
@@ -189,47 +190,50 @@ def qaoa(arr,layers:int):
     
     return counts
 
-# Defining a test array
-test_array = [5,4,6,1,12,7]
-layers = 4
+if __name__ == "__main__":
+    # Defining a test array and layers.
+    test_array = [5,1,4]
+    layers = 4
 
-# Running QAOA on for Number Partitioning. 
-counts = qaoa(test_array,layers)
+    # Running QAOA on for Number Partitioning.
+    counts = qaoa(test_array,layers)
 
-# Plotting the output state.
-plt.figure(figsize=(15, 5))
-plt.bar(range(len(counts)), list(counts.values()), align='center', color='red')
-plt.xticks(range(len(counts)), list(counts.keys()), rotation=90)
-plt.title("QAOA Output State")
-plt.xlabel("Bitstrings")
-plt.ylabel("Counts")
-plt.grid()
-plt.show()
+    # Plotting the output state.
+    plt.figure(figsize=(15, 5))
+    plt.bar(range(len(counts)), list(counts.values()), align='center', color='red')
+    plt.xticks(range(len(counts)), list(counts.keys()), rotation=90)
+    plt.title("QAOA Output State")
+    plt.xlabel("Bit strings")
+    plt.ylabel("Counts")
+    plt.grid()
+    plt.show()
 
-# Plotting Cost vs. iterations.
-plt.figure(figsize=(15, 5))
-plt.plot(range(len(cost)),cost,color='g',ls='--',marker='o',lw=2)
-plt.xticks(range(1,len(cost)+1,5))
-plt.title('Cost vs. Iterations')
-plt.xlabel('Iterations')
-plt.ylabel('Cost')
-plt.grid()
-plt.show()
+    # Plotting Cost vs. iterations.
+    plt.figure(figsize=(15, 5))
+    plt.plot(range(len(cost)),cost,color='g',ls='--',marker='o',lw=2)
+    plt.xticks(range(1,len(cost)+1,5))
+    plt.title('Cost vs. Iterations')
+    plt.xlabel('Iterations')
+    plt.ylabel('Cost')
+    plt.grid()
+    plt.show()
 
-best_sol = find_most_common_solutions(counts,3)
-print(f'\nQAOA Top 3 solutions for {test_array} and {layers} layers: \n{best_sol}')
+    # Printing Solutions Sets.
+    best_sol = find_most_common_solutions(counts,3)
+    print(f'\nTop 3 solutions for the array {test_array} and {layers} layers: \n{best_sol}')
 
-c = sum(test_array)
+    # Calculating S and S_A
+    S = []
+    S_A = []
+    for ind,bit in enumerate(best_sol[0]):
+        if bit == '1':
+            S.append(ind)
+        else:
+            S_A.append(ind)
 
-S = []
-S_A = []
-for ind,bit in enumerate(best_sol[0]):
-    if bit == '1':
-        S.append(ind)
-    else:
-        S_A.append(ind)
+    # Calculating Sum(S) and Sum(S/A)
+    sum_S = sum(np.array(test_array)[S])
+    sum_S_A = sum(np.array(test_array)[S_A])
 
-sum_S = sum(np.array(test_array)[S])
-sum_S_A = sum(np.array(test_array)[S_A])    
-
-print(f'\n\n Best partition:\nS {np.array(test_array)[S]} - Sum(S) = {sum_S}\nS/A {np.array(test_array)[S_A]} - Sum(S/A) = {sum_S_A}')
+    # Printing the best optimal partition.
+    print(f'\nBest Partition:\nS: {np.array(test_array)[S]}\nSum(S) = {sum_S}\n\nS/A: {np.array(test_array)[S_A]}\nSum(S/A) = {sum_S_A}')
