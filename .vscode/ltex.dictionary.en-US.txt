@@ -1,1 +1,8 @@
 qaoa
+QUBO
+QAOA
+ipynb
+qs
+QRISE
+Qu-Cats
+Ising

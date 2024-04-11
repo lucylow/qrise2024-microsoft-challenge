@@ -1,5 +1,5 @@
-"""This script acts as a host for Q# to implement Quantum Approximate Optimization Algorithm (QAOA) on a gate-based
-Quantum Computing model.
+"""
+This script acts as a host for Q# to implement Quantum Approximate Optimization Algorithm (QAOA).
 """
 
 # Importing libraries
@@ -97,7 +97,7 @@ def arr_to_str(a):
         string += str(i) + ","
     return '[' + string[:-1] + ']'
 
-def integer_to_counts(n, result):
+def integer_to_counts(n: int, result: list) -> dict:
     """
     Convert integers to counts and return a dictionary of counts.
     
@@ -212,23 +212,23 @@ def qaoa_NPP(arr,layers:int):
 
 if __name__ == "__main__":
     # Defining a test array and layers.
-    test_array = [5,1,4]
+    test_array = [2,1,4]
     layers = 4
 
     # Running QAOA on for Number Partitioning.
     counts = qaoa_NPP(test_array,layers)
 
-    # Plotting the output state.
+    # Plotting the optimal output state.
     plt.figure(figsize=(15, 5))
     plt.bar(range(len(counts)), list(counts.values()), align='center', color='red')
     plt.xticks(range(len(counts)), list(counts.keys()), rotation=90)
-    plt.title("QAOA Output State")
+    plt.title("QAOA Output State with Optimal Parameters")
     plt.xlabel("Bit strings")
     plt.ylabel("Counts")
     plt.grid()
     plt.show()
 
-    # Plotting Cost vs. iterations.
+    # Plotting Cost vs iterations.
     plt.figure(figsize=(15, 5))
     plt.plot(range(len(cost)),cost,color='g',ls='--',marker='o',lw=2)
     plt.xticks(range(1,len(cost)+1,5))
