@@ -44,10 +44,10 @@ For detailed instructions and code snippets, refer to the [full documentation](l
 
 ## Contributors
 
-- Katie Harrison (@ )
-- Muhammad Waqar Amin (@ )
-- Sarah Dweik (@ )
-- Nikhil Londhe (@ )
+- Katie Harrison (@Katie1harrison)
+- Muhammad Waqar Amin (@Eagle-Eyes7)
+- Sarah Dweik (@Sarah-Dweik)
+- Nikhil Londhe (@nikhil-co)
 - Lucy Low (@ )
 
 ## License
