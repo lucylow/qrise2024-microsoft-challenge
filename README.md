@@ -1,6 +1,5 @@
-# Microsoft Quantum research challenge at QRISE 2024: Resource estimation of quantum algorithms 
+# Microsoft Quantum research challenge at QRISE 2024: Quantum Resource Estimation of QAOA
 
-QUBO Numerical Partitioning with Azure Quantum Resource Estimator
 
 ## Prerequisites
 Ensure you have the following prerequisites installed:
