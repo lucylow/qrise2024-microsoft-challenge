@@ -91,7 +91,7 @@ Continue exploring the capabilities of the Resource Estimator:
 - Learn how to leverage the Resource Estimator for various QUBO problems and scenarios.
 
 ## Further Information
-For detailed instructions and code snippets, refer to the [full documentation](https://github.com/lucylow/qrise2024-microsoft-challenge/blob/main/qaoa/qaoa_notebook.ipynb).
+For detailed instructions and code snippets, refer to the [full documentation](https://github.com/lucylow/qrise2024-microsoft-challenge/blob/main/qaoa/qaoa_notebook.ipynb) and [the writeup](https://github.com/lucylow/qrise2024-microsoft-challenge/blob/main/writeup.pdf).
 
 ## Contributors
 
