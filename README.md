@@ -1,5 +1,14 @@
 # Microsoft Quantum research challenge at QRISE 2024: Quantum Resource Estimation of QAOA
 
+<div>
+  
+  [![Status](https://img.shields.io/badge/status-work--in--progress-success.svg)]()
+  [![GitHub Issues](https://img.shields.io/github/issues/lucylow/qrise2024-microsoft-challenge.svg)](https://github.com/lucylow/qrise2024-microsoft-challenge/issues)
+  [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/lucylow/qrise2024-microsoft-challenge.svg)](https://github.com/lucylow/qrise2024-microsoft-challenge/pulls)
+  [![License](https://img.shields.io/bower/l/bootstrap)]()
+
+</div>
+
 ![](https://github.com/lucylow/qrise2024-microsoft-challenge/blob/main/extra/Logo.png?raw=true)
 
 
