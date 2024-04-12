@@ -43,8 +43,12 @@ This repository contains code examples and instructions for using the Azure Quan
 For detailed instructions and code snippets, refer to the [full documentation](link_to_documentation).
 
 ## Contributors
-- John Doe (@johndoe)
-- Jane Smith (@janesmith)
+
+- Katie Harrison (@ )
+- Muhammad Waqar Amin (@ )
+- Sarah Dweik (@ )
+- Nikhil Londhe (@ )
+- Lucy Low (@ )
 
 ## License
 This project is licensed under the [MIT License](link_to_license).
