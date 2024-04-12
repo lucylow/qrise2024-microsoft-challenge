@@ -1,5 +1,7 @@
 # Microsoft Quantum research challenge at QRISE 2024: Quantum Resource Estimation of QAOA
 
+![](https://github.com/lucylow/qrise2024-microsoft-challenge/blob/main/extra/Logo.png?raw=true)
+
 
 ## Prerequisites
 Ensure you have the following prerequisites installed:
