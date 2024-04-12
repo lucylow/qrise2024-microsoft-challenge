@@ -1,4 +1,4 @@
-# Microsoft Quantum research challenge at QRISE 2024: Quantum Resource Estimation of QAOA
+# Microsoft Quantum Research Challenge at QRISE 2024: Quantum Resource Estimation of QAOA
 
 <div>
   
