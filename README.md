@@ -40,7 +40,7 @@ This repository contains code examples and instructions for using the Azure Quan
    - Leverage the Resource Estimator for various QUBO problems and scenarios.
 
 ## Further Information
-For detailed instructions and code snippets, refer to the [full documentation](link_to_documentation).
+For detailed instructions and code snippets, refer to the [full documentation]([link_to_documentation](https://github.com/lucylow/qrise2024-microsoft-challenge/blob/main/qaoa/qaoa_notebook.ipynb)).
 
 ## Contributors
 
