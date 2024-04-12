@@ -48,7 +48,7 @@ For detailed instructions and code snippets, refer to the [full documentation](l
 - Muhammad Waqar Amin (@Eagle-Eyes7)
 - Sarah Dweik (@Sarah-Dweik)
 - Nikhil Londhe (@nikhil-co)
-- Lucy Low (@ )
+- Lucy Low (@lucylow)
 
 ## License
 This project is licensed under the [MIT License](link_to_license).
